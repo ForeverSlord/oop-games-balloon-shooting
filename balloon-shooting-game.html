@@ -65,15 +65,6 @@
 
 			var that = this;
 
-			this.ele.addEventListener("click",function(){
-
-				console.info(that);
-				this.className = "balloon blow";
-				score.update(that.mark);
-
-				console.info("被打中了"+that.mark);
-			})
-
 			this.ele.addEventListener("animationend",function(){
 				// alert("animationend");
 
@@ -121,6 +112,14 @@
 			this.ele.style.backgroundPositionY  = (Math.ceil( this.mark/4) - 1)  * -123 +"px";
 			
 		}
+
+		Balloon.prototype.die = function(){
+
+				this.ele.className = "balloon blow";
+				score.update(this.mark);
+
+				console.info("被打中了"+this.mark);
+			}
 		// var b1 = new Balloon();
 		// console.dir(b1);
 
@@ -234,6 +233,31 @@
 				background.setSrc('img/gamebg.jpg'); /*设置背景*/
 				score.init();        //初始化分数
 				gun.init();          //初始化gun
+
+				//给body添加点击事件
+				document.body.addEventListener("click",function(e){
+					console.info(e.clientX,e.clientY);
+
+					//计算每个气球的中心点距离当前的鼠标的位置
+					for (var i = 0;i< that.actors.length;i++){
+
+						var obj = that.actors[i];
+						if(obj.constructor === Balloon){	//对于每一个气球
+							//获取中心点
+							var x = obj.ele.offsetLeft +  96/2;
+							var y = obj.ele.offsetTop +  96/2;
+
+							// 计算鼠标位置与中心点的位置之间的距离，如果这个距离小于24，说明打中了
+							if( Math.pow(x-e.clientX,2) + Math.pow(y-e.clientY,2) < Math.pow(24,2) ){
+								//console.info( " 这里这个气球被打中了 ");
+								//console.info(obj)
+								obj.die();
+							}
+							
+						}
+					}
+					
+				})
 
 				for(var i=0;i<3;i++){ /*加入云朵*/
 					this.actors.push( new Cloud() );
