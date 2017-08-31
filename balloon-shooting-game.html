@@ -23,6 +23,18 @@
 			position: absolute;
 			top: 500px;/*设置气球从底部出来的位置*/
 		} 
+
+		.blow{
+			animation: blow .5s forwards;
+		}
+
+		@keyframes blow{
+			0%{ transform: scale(1); }
+			
+			60%{ transform: scale(5); opacity: 0;}
+			100%{ transform: scale(5); opacity: 0;}
+
+		}
 	</style>
 </head>
 <body>
@@ -45,7 +57,7 @@
 			]
 			//这里写属性
 			this.ele = document.createElement("div");
-			this.ele.className="balloon";//
+			this.ele.className = "balloon";//
 			this.mark  = 0;
 			this.speed = 0 ;
 			
@@ -56,11 +68,18 @@
 			this.ele.addEventListener("click",function(){
 
 				console.info(that);
+				this.className = "balloon blow";
+				score.update(that.mark);
 
 				console.info("被打中了"+that.mark);
 			})
 
+			this.ele.addEventListener("animationend",function(){
+				// alert("animationend");
 
+				this.className = "balloon";
+				that.reBirth();
+			})
 			document.body.appendChild(this.ele);
 		}
 
@@ -108,6 +127,49 @@
 		// setInterval(function(){
 		// 	b1.move();
 		// },50);
+
+		//添加枪
+		var gun = {
+			ele:document.createElement("div"),
+			init:function(){
+				this.ele.style.zIndex = 100;
+				this.ele.style.width  = "96px";
+				this.ele.style.height = "96px";
+				this.ele.style.background = "url(img/gun.png) no-repeat center center";
+				this.ele.style.position = "absolute";
+				document.body.appendChild(this.ele);
+				var that = this;
+				document.body.addEventListener("mousemove",function(e){
+					//console.info(e.clientX,e.clientY);
+					that.move(e.clientX,e.clientY);
+
+				})
+			},
+			move:function(x,y){
+				x = x - 48;
+				y = y - 48;
+				this.ele.style.left = x +"px";
+				this.ele.style.top  = y +"px";
+			}
+		}
+
+		//添加分数
+		var score = {
+			ele:document.createElement("div"),
+			mark:0,
+			init:function(){
+				this.ele.style.position="absolute";
+				this.update(0);						//更新分数
+				document.body.appendChild(this.ele);
+			},
+			update:function(s){
+				//在原分数的基础上，添加s分
+				this.mark += s;
+
+				//更新到dom元素上
+				this.ele.innerHTML = this.mark;
+			}
+		}
 
 		//添加云朵
 		function Cloud(){
@@ -170,6 +232,8 @@
 				var that = this;  /*保存 this*/
 
 				background.setSrc('img/gamebg.jpg'); /*设置背景*/
+				score.init();        //初始化分数
+				gun.init();          //初始化gun
 
 				for(var i=0;i<3;i++){ /*加入云朵*/
 					this.actors.push( new Cloud() );
