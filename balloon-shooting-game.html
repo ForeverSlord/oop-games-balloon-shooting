@@ -14,6 +14,7 @@
 			background-size: 100% 100%;
 			background-repeat: no-repeat;
 			overflow: hidden;
+			cursor: none;
 		}
 		.balloon{
 			width: 96px; /* 96*4 = 384 */
@@ -30,7 +31,6 @@
 
 		@keyframes blow{
 			0%{ transform: scale(1); }
-			
 			60%{ transform: scale(5); opacity: 0;}
 			100%{ transform: scale(5); opacity: 0;}
 
@@ -42,7 +42,7 @@
 <!-- <div>
 
 </div> -->
-
+	<audio id="audio" src="img/gun.mp3"></audio>
 	<script>
 		//用于在[m,n]之间产生一个随机的整数
 		function getRandom(m,n){
@@ -236,7 +236,9 @@
 
 				//给body添加点击事件
 				document.body.addEventListener("click",function(e){
-					console.info(e.clientX,e.clientY);
+
+					document.getElementById("audio").play();//开枪的声音
+					//console.info(e.clientX,e.clientY);
 
 					//计算每个气球的中心点距离当前的鼠标的位置
 					for (var i = 0;i< that.actors.length;i++){
