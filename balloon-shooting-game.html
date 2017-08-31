@@ -5,6 +5,16 @@
 	<title>Document</title>
 
 	<style>
+		body,html{
+			height:100%;
+			width:100%;
+		}
+		body{
+			background-position: center center;
+			background-size: 100% 100%;
+			background-repeat: no-repeat;
+			overflow: hidden;
+		}
 		.balloon{
 			width: 96px; /* 96*4 = 384 */
 			height: 123px;   /* 371 / 3 = 123.3333 */
@@ -53,14 +63,22 @@
 		Balloon.prototype.move = function(){
 			
 			//获取当前的top
-			console.info( this.ele.offsetTop);
+			//console.info( this.ele.offsetTop);
 			var currentTop = this.ele.offsetTop;
 
-			//是不断把top变小（向上升）
-			var newTop = currentTop - this.speed;
+			// 如果currentTop< -123，则要重新从地下长出来
+			if(currentTop < -123){ //123是气球的高度
+				console.info("重新从地下长出来");
+				this.reBirth();
+			}
+			else{
 
-			//更新到dom元素上
-			this.ele.style.top = newTop +"px";
+				//是不断把top变小（向上升）
+				var newTop = currentTop - this.speed;
+
+				//更新到dom元素上
+				this.ele.style.top = newTop +"px";
+			}
 
 		}
 
@@ -86,6 +104,15 @@
 		// 	b1.move();
 		// },50);
 
+		var background = {
+			src:"img/bg.jpg",  //默认背景
+			setSrc:function(newSrc){
+				var newSrc  = newSrc || this.src;
+				document.body.style.backgroundImage = "url("+ newSrc + ")";
+			}
+		}
+
+
 		var game = {
 
 			frameIndex:0,
@@ -94,6 +121,10 @@
 			actors : [],
 			start : function(){
 				var that = this;  /*保存 this*/
+
+				background.setSrc('img/gamebg.jpg'); /*设置背景*/
+
+
 				setInterval(function(){
 
 					that.frameIndex++;
